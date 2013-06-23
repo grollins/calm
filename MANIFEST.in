@@ -1,0 +1,15 @@
+include MANIFEST.in
+include LICENSE.txt
+include README.rst
+# Top-level build script
+include setup.py
+# All source files
+recursive-include calm *
+# All documentation
+recursive-include doc *
+# All scripts
+# recursive-include scripts *
+# Exclude what we don't want to include
+prune doc/build
+prune doc/source/generated
+global-exclude *.pyc *~ *.bak *.swp *.pyo
