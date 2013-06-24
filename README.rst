@@ -3,6 +3,10 @@ What is calm?
 
 **calm** is a python library for denoising 1D time series.
 
+.. image:: calm_architecture.pdf
+    :align: center
+    :width: 80%
+
 Links
 -----
 
