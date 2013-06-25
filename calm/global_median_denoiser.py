@@ -1,10 +1,8 @@
-from calm.pandas_calculator import PandasCalculator
-
 class GlobalMedianDenoiser(object):
     """docstring for GlobalMedianDenoiser"""
-    def __init__(self):
+    def __init__(self, calculator):
         super(GlobalMedianDenoiser, self).__init__()
-        self.calculator = PandasCalculator()
+        self.calculator = calculator
 
     def run_denoising(self, time_series):
         global_median = self.calculator.median(time_series)
