@@ -5,6 +5,12 @@ Little, M. A., and Jones, N. S. Generalized methods and solvers for noise
 removal from piecewise constant signals. II. New methods.
 Proc. R. Soc. A-Math. Phys. Eng. Sci. 467, 2135 (2011), 3115-3140.
 
+Also implements the SIC penalty function of Kalafut and Visscher:
+An objective, model-independent method for detection of non-uniform steps
+in noisy signals.
+Bennett Kalafut, Koen Visscher
+Computer Physics Communications 179 (2008) 716–723
+
 Input arguments:
 square     `True` perform least-squares fitting,
            `False` perform least-absolute (robust) fitting.
@@ -77,9 +83,17 @@ class JumpPenaltyDenoiser(object):
         return smooth_ts
 
     def compute_global_fcn(self, m, x, square, gamma, iter_num):
-        H = self.compute_likelihood(m, x, square)
-        H += gamma * iter_num
+        H = self.compute_likelihood(m, x, square) + (gamma * iter_num)
         return H
+
+    def compute_kalafut_global_fcn(self, m, x, square, iter_num):
+        k = iter_num
+        n = len(x)
+        sigma_squared = self.compute_likelihood(m, x, square)
+        logL = n * self.calculator.scalar_log10(sigma_squared)
+        penalty_term = (k + 2) * self.calculator.scalar_log10(n)
+        SIC = logL + penalty_term
+        return SIC
 
     def compute_likelihood(self, m, x, square):
         if square:
@@ -144,6 +158,7 @@ class JumpPenaltyDenoiser(object):
         level = self.compute_level(raw_ts.get_values_at_indices(i), square)
         smooth_ts.set_signal_from_scalar(level, i)
         # Compute global functional value at current solution
-        H = self.compute_global_fcn(smooth_ts, raw_ts, square, gamma, iter_num)
+        # H = self.compute_global_fcn(smooth_ts, raw_ts, square, gamma, iter_num)
+        H = self.compute_kalafut_global_fcn(smooth_ts, raw_ts, square, iter_num)
         return H, smooth_ts
 

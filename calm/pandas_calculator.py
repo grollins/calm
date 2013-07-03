@@ -1,3 +1,5 @@
+import numpy
+
 class PandasCalculator(object):
     """docstring for PandasCalculator"""
     def __init__(self):
@@ -28,3 +30,6 @@ class PandasCalculator(object):
 
     def argmin(self, pandas_series):
         return pandas_series.series.argmin()
+
+    def scalar_log10(self, scalar):
+        return numpy.log10(scalar)
