@@ -9,7 +9,7 @@ Also implements the SIC penalty function of Kalafut and Visscher:
 An objective, model-independent method for detection of non-uniform steps
 in noisy signals.
 Bennett Kalafut, Koen Visscher
-Computer Physics Communications 179 (2008) 716–723
+Computer Physics Communications 179 (2008) 716-723
 
 Input arguments:
 square     `True` perform least-squares fitting,
@@ -36,7 +36,7 @@ class JumpPenaltyDenoiser(object):
             print 'Iter# Global functional'
 
         iter_num = 1
-        maxiter = 50
+        maxiter = 500
         while iter_num < maxiter:
             if noisy:
                 print '%5d %7.2e' % (iter_num, H_old)
