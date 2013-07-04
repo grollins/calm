@@ -29,11 +29,13 @@ class PandasTimeSeries(object):
         return my_copy
 
     def set_signal_from_scalar(self, scalar, index_list=None):
-        if index_list:
+        if index_list is None:
+            self.series.fill(scalar)
+        elif len(index_list) > 0:
             scalar_list = [scalar] * len(index_list)
             self.set_values_at_indices(scalar_list, index_list)
         else:
-            self.series.fill(scalar)
+            return
 
     def is_similar_to(self, other_time_series, atol=1e-1):
         return numpy.allclose(self.series, other_time_series.series, atol=atol)
@@ -49,3 +51,9 @@ class PandasTimeSeries(object):
 
     def isfinite(self):
         return numpy.isfinite(self.series).all()
+
+    def get_indices_where_geq(self, threshold):
+        bool_series = (self.series >= threshold)
+        series_where_true = self.series[bool_series]
+        inds = series_where_true.index
+        return inds
