@@ -20,13 +20,20 @@ gamma      Positive regularization parameter.
 import numpy
 from copy import copy
 
+GLOBAL_FCN_OPTIONS = ['SIC', 'AIC', 'LJ']
+
 class JumpPenaltyDenoiser(object):
     """docstring for JumpPenaltyDenoiser"""
-    def __init__(self, calculator):
+    def __init__(self, calculator, global_fcn='SIC'):
         super(JumpPenaltyDenoiser, self).__init__()
         self.calculator = calculator
+        if global_fcn in GLOBAL_FCN_OPTIONS:
+            self.global_fcn = global_fcn
+        else:
+            raise ValueError("global_fcn must be one of these: %s" % \
+                             GLOBAL_FCN_OPTIONS)
 
-    def run_denoising(self, raw_ts, square, gamma, noisy=False):
+    def run_denoising(self, raw_ts, square, gamma, max_iter=500, noisy=False):
         N = len(raw_ts)
         knot_list = []
 
@@ -36,8 +43,7 @@ class JumpPenaltyDenoiser(object):
             print 'Iter# Global functional'
 
         iter_num = 1
-        maxiter = 500
-        while iter_num < maxiter:
+        while iter_num < max_iter:
             if noisy:
                 print '%5d %7.2e' % (iter_num, H_old)
             # =====================================
@@ -78,22 +84,31 @@ class JumpPenaltyDenoiser(object):
             # end while
 
         if noisy:
-            if iter_num == maxiter:
+            if iter_num == max_iter:
                 print 'Maximum iterations exceeded'
         return smooth_ts
 
-    def compute_global_fcn(self, m, x, square, gamma, iter_num):
-        H = self.compute_likelihood(m, x, square) + (gamma * iter_num)
-        return H
-
-    def compute_kalafut_global_fcn(self, m, x, square, iter_num):
+    def compute_SIC_global_fcn(self, m, x, square, gamma, iter_num):
         k = iter_num
         n = len(x)
         sigma_squared = self.compute_likelihood(m, x, square)
         logL = n * self.calculator.scalar_log10(sigma_squared)
-        penalty_term = (k + 2) * self.calculator.scalar_log10(n)
+        penalty_term = gamma * (k+2) * self.calculator.scalar_log10(n)
         SIC = logL + penalty_term
         return SIC
+
+    def compute_AIC_global_fcn(self, m, x, square, gamma, iter_num):
+        k = iter_num
+        n = len(x)
+        sigma_squared = self.compute_likelihood(m, x, square)
+        logL = n * self.calculator.scalar_log10(sigma_squared)
+        penalty_term = gamma * (2*k) * self.calculator.scalar_log10(n)
+        AIC = logL + penalty_term
+        return AIC
+
+    def compute_LJ_global_fcn(self, m, x, square, gamma, iter_num):
+        H = self.compute_likelihood(m, x, square) + (gamma * iter_num)
+        return H
 
     def compute_likelihood(self, m, x, square):
         if square:
@@ -158,7 +173,14 @@ class JumpPenaltyDenoiser(object):
         level = self.compute_level(raw_ts.get_values_at_indices(i), square)
         smooth_ts.set_signal_from_scalar(level, i)
         # Compute global functional value at current solution
-        # H = self.compute_global_fcn(smooth_ts, raw_ts, square, gamma, iter_num)
-        H = self.compute_kalafut_global_fcn(smooth_ts, raw_ts, square, iter_num)
+        if self.global_fcn == 'SIC':
+            H = self.compute_SIC_global_fcn(smooth_ts, raw_ts, square,
+                                            gamma, iter_num)
+        elif self.global_fcn == 'AIC':
+            H = self.compute_AIC_global_fcn(smooth_ts, raw_ts, square,
+                                            gamma, iter_num)
+        elif self.global_fcn == 'LJ':
+            H = self.compute_LJ_global_fcn(smooth_ts, raw_ts, square,
+                                           gamma, iter_num)
         return H, smooth_ts
 
