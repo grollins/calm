@@ -1,4 +1,5 @@
 import numpy
+import scipy.stats
 
 class PandasCalculator(object):
     """docstring for PandasCalculator"""
@@ -33,3 +34,12 @@ class PandasCalculator(object):
 
     def scalar_log10(self, scalar):
         return numpy.log10(scalar)
+
+    def subtract_scalar(self, pandas_series, scalar):
+        pandas_series.series -= scalar
+        return
+
+    def compute_zscore(self, pandas_series):
+        zscore_series = scipy.stats.zscore(pandas_series.series)
+        pandas_series.series = zscore_series
+        return pandas_series

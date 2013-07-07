@@ -16,3 +16,18 @@ def apply_threshold_denoiser_to_time_series():
 
     output_csv_path = os.path.join("test_data", "output_from_threshold_test.csv")
     denoised_ts.write_csv(output_csv_path)
+
+@nose.tools.istest
+def apply_threshold_denoiser_to_spo_time_series():
+    noisy_ts = PandasTimeSeries()
+    input_csv_path = os.path.join("test_data", "spo_data.csv")
+    noisy_ts.load_csv(input_csv_path)
+
+    calculator = PandasCalculator()
+    threshold_denoiser = ThresholdDenoiser(calculator)
+    denoised_ts = threshold_denoiser.run_denoising(noisy_ts, threshold_factor=6,
+                                                   noisy=True)
+
+    output_csv_path = os.path.join("test_data", "spo_output_from_threshold_test.csv")
+    denoised_ts.write_csv(output_csv_path)
+
