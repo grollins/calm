@@ -28,6 +28,10 @@ class PandasTimeSeries(object):
         my_copy.series = self.series.copy()
         return my_copy
 
+    def set_signal_values_from_npy_array(self, signal_array):
+        new_series = pandas.Series(signal_array, index=self.series.index)
+        self.series = new_series
+
     def set_signal_from_scalar(self, scalar, index_list=None):
         if index_list is None:
             self.series.fill(scalar)
@@ -54,6 +58,12 @@ class PandasTimeSeries(object):
 
     def get_indices_where_geq(self, threshold):
         bool_series = (self.series >= threshold)
+        series_where_true = self.series[bool_series]
+        inds = series_where_true.index
+        return inds
+
+    def get_indices_where_lt(self, threshold):
+        bool_series = (self.series < threshold)
         series_where_true = self.series[bool_series]
         inds = series_where_true.index
         return inds
