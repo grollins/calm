@@ -102,7 +102,7 @@ class JumpPenaltyDenoiser(object):
         n = len(x)
         sigma_squared = self.compute_likelihood(m, x, square)
         logL = n * self.calculator.scalar_log10(sigma_squared)
-        penalty_term = gamma * (2*k) * self.calculator.scalar_log10(n)
+        penalty_term = gamma * (2*k)
         AIC = logL + penalty_term
         return AIC
 
