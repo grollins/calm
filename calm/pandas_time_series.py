@@ -41,6 +41,9 @@ class PandasTimeSeries(object):
         else:
             return
 
+    def sum_signal_with_array(self, signal_array):
+        self.series += signal_array
+
     def is_similar_to(self, other_time_series, atol=1e-1):
         return numpy.allclose(self.series, other_time_series.series, atol=atol)
 
