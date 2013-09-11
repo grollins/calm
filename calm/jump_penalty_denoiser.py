@@ -33,7 +33,8 @@ class JumpPenaltyDenoiser(object):
             raise ValueError("global_fcn must be one of these: %s" % \
                              GLOBAL_FCN_OPTIONS)
 
-    def run_denoising(self, raw_ts, square, gamma, max_iter=500, noisy=False):
+    def run_denoising(self, raw_ts, square=True, gamma=1.0, max_iter=500,
+                      noisy=False):
         N = len(raw_ts)
         knot_list = []
 
