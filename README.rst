@@ -5,11 +5,12 @@ What is calm?
 
 .. image:: examples/denoising/plots/trajectory0.png
     :align: center
-    :width: 80%
+    :width: 70%
+
 
 .. image:: calm_architecture.png
     :align: center
-    :width: 80%
+    :width: 70%
 
 License information
 -------------------
